@@ -52,6 +52,14 @@ export const useLayoutStore = create(
         },
       }))
     },
+    changePaneType: (paneId: ruid, type: PaneType) => {
+      set((state: any) => ({
+        flatLayout: {
+          ...state.flatLayout,
+          [paneId]: {...state.flatLayout[paneId], type}
+        }
+      }))
+    },
     openContentInPane: (
       targetPaneId: ruid  = 'root',
       content: { name: string; text: string },
@@ -65,7 +73,7 @@ export const useLayoutStore = create(
       if it does add the new display data obj id to the found pane displayContent list.
       the new display data obj id should be added to the displays obj. The key is the id of the display data obj.
        */
-      const {flatLayout, addPane, updateDisplay, updateLayoutStructure} = get();
+      const {flatLayout, addPane, updateDisplay, updateLayoutStructure, changePaneType} = get();
       const targetPaneExists = Object.hasOwn(flatLayout, targetPaneId);
       const createdPane = createPane(randomWord(4, 10), type, direction, [1], [], targetPaneExists ? targetPaneId : 'root');
 
@@ -76,7 +84,8 @@ export const useLayoutStore = create(
         props: content
       }
       createdPane.displayContent?.push(newDisplayData.id);
-
+      //set parent pane type to split
+      // changePaneType(targetPaneId, 'split');
       updateDisplay(newDisplayData);
       addPane(createdPane);
       updateLayoutStructure();

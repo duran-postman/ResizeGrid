@@ -17,6 +17,7 @@ export const ContentSelector = () => {
   const [selectedContentId, setSelectedContentId] = useState<string>('');
   const [selectedPaneId, setSelectedPaneId] = useState<string>('root'); // optional
   const layout = useLayoutStore((state: any) => state.layout);
+  const focusedPaneId = useLayoutStore((state: any) => state.focusedPaneId);
   const setFocusedPaneId = useLayoutStore((state: any) => state.setFocusedPaneId);
   const openContentInPane = useLayoutStore((state: any) => state.openContentInPane);
 
@@ -27,9 +28,11 @@ export const ContentSelector = () => {
     const content = getContent(selectedContentId);
     if (content) {
       const {direction} = e.target.dataset
-      console.log("🚀 ~ handleOpen ~ direction:", direction)
+      // console.log("🚀 ~ handleOpen ~ direction:", direction)
       // Pass selectedPaneId or undefined (auto-create pane if needed)
-      const paneIdToUse = selectedPaneId;//|| undefined;
+      // const paneIdToUse = selectedPaneId;//|| undefined;
+      const paneIdToUse = focusedPaneId || 'root';//|| undefined;
+      console.log('The paneIdToUse ', paneIdToUse)
       openContentInPane(paneIdToUse, content, ComponentNames.TextDisplay, direction);
     }
   };
