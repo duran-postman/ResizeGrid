@@ -2,15 +2,21 @@ import TextDisplay from './TextDisplay';
 
 export const DEFAULT_SIZE = 1;
 type Brand<T, B> = T & { __brand: B };
+export type ContentStructure = {
+  id: UUID;
+  hidden: boolean;
+  name: string;
+  text: string;
+}
 
 export type DisplayData = {
-  id: string;
+  id: UUID;
   paneId: string;
   componentName: string;
   props?: Record<string, any>;
 };
 
-type UUID = Brand<string, 'uuid'>;
+export type UUID = Brand<string, 'uuid'>;
 export const getId = () => crypto.randomUUID() as UUID;
 
 export function normalizeSizes(sizes: number[] = [], count: number) {
@@ -33,7 +39,9 @@ export type Pane = {
   parentId: ruid;
   sizes?: number[];
   children?: Pane[];
+  displayContent?: Array<ruid>; // contains a list of associated display data id values
 };
+export type RootPane = Omit<Pane, 'displayContent'>;
 
 export type FlatPaneContainer = {
   root: Pane;
@@ -43,9 +51,10 @@ export const createPane = (
   name: string,
   type: PaneType = 'leaf',
   direction: PaneDirection = 'row',
-  sizes: number[] | null = null,
-  children: Pane[] | null = null,
-  parentId: ruid = 'root'
+  sizes: number[] = [],
+  children: Pane[] = [],
+  parentId: ruid = 'root',
+  displayContentIds: UUID[] = []
 ) => {
   const paneItem: Pane = {
     id: getId(),
@@ -53,14 +62,17 @@ export const createPane = (
     type,
     direction,
     parentId,
-    ...(sizes != null && { sizes }),
-    ...(children != null && { children }),
+    sizes,
+    children,
+    // ...(sizes != null && { sizes }),
+    // ...(children != null && { children }),
+    displayContent: [...new Set(displayContentIds)]
   };
 
   return paneItem
 };
 
-// export const defaultLayout:Pane = {
+// export const defaultLayout:any = {
 //   id: 'root',
 //   name: 'root',
 //   type: 'split',
@@ -78,7 +90,7 @@ export const createPane = (
 //     ),
 //   ],
 // };
-export const defaultLayout:Pane = {
+export const defaultLayout:RootPane = {
   id: 'root',
   name: 'root',
   type: 'split',

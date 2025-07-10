@@ -1,8 +1,11 @@
-const TextDisplay = ({ name, text }: { name: string; text: string }) => (
-  <div className="text-display">
-    <h3>{name}</h3>
-    <p>{text}</p>
-  </div>
-);
+const TextDisplay = ({ contentName, text }: { contentName: string; text: string }) => {
+  console.log('The text display ', contentName, text, '\n\n')
+  return (
+    <div className="text-display">
+      <h3>{contentName}</h3>
+      <p>{text}</p>
+    </div>
+  )
+};
 
 export default TextDisplay;

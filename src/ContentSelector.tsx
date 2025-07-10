@@ -93,6 +93,7 @@ export const ContentSelector = () => {
       </button>
       <button onClick={clearReleoad}>clear local</button>
       <button onClick={resetFocusedPane}>null focus</button>
+      {selectedPaneId !== null}
     </div>
   );
 };
