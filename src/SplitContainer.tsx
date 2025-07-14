@@ -28,9 +28,10 @@ export const SplitContainer = ({ node }: { node: Pane }) => {
       newSizes[index + 1] = b;
 
       const newLayout = JSON.parse(JSON.stringify(layout)) as Pane;
-      let target = findNodeById(newLayout, node.id);
-      if (target) target.sizes = newSizes;
-      updateLayoutSizes(newLayout);
+      // let target = findNodeById(newLayout, node.id);
+      // if (target) target.sizes = newSizes;
+      // updateLayoutSizes(newLayout);
+      updateLayoutSizes(node.id, newSizes);
     }
 
     function onMouseUp() {
@@ -56,7 +57,7 @@ export const SplitContainer = ({ node }: { node: Pane }) => {
       : '100%',
   };
 
-  console.log('The actual split content renderer ', node)
+  // console.log('The actual split content renderer ', node)
   return (
     <div className="split-container" style={gridStyle}>
       {node.children.map((child: Pane, index: number) => {

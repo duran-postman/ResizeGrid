@@ -138,3 +138,4 @@ export const randomWord = (minLength = 3, maxLength = 8, capitalize = false) => 
 
   return word;
 }
+

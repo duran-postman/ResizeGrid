@@ -1,4 +1,10 @@
-const baseContent = [
+export type ContentType = {
+  id: string;
+  hidden: boolean;
+  contentName: string;
+  text: string;
+}
+const baseContent: ContentType[] = [
   {
     "id": "50749ee4-5c6c-429c-adf5-1370c2fc1f72",
     "hidden": true,
