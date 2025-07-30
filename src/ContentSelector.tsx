@@ -20,6 +20,7 @@ export const ContentSelector = () => {
   const focusedPaneId = useLayoutStore((state: any) => state.focusedPaneId);
   const setFocusedPaneId = useLayoutStore((state: any) => state.setFocusedPaneId);
   const openContentInPane = useLayoutStore((state: any) => state.openContentInPane);
+  const updateLayoutStructure = useLayoutStore((state: any) => state.updateLayoutStructure);
 
   const allPanes = getLeafPaneIds(layout);
 
@@ -43,6 +44,9 @@ export const ContentSelector = () => {
   const clearReleoad = () => {
     localStorage.clear();
     window.location.replace(window.location.href);
+  }
+  const reflowDisoplay = () => {
+    updateLayoutStructure();
   }
   return (
     <div className="content-selector space-y-2 p-2 border rounded">
@@ -96,6 +100,7 @@ export const ContentSelector = () => {
       </button>
       <button onClick={clearReleoad}>clear local</button>
       <button onClick={resetFocusedPane}>null focus</button>
+      <button onClick={reflowDisoplay}>Reflow display content</button>
       {selectedPaneId !== null}
     </div>
   );

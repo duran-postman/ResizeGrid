@@ -15,6 +15,7 @@ export const PaneRenderer = ({ paneId, displayConteneIds }: { paneId: string, di
   // console.log('The pane renderer ', paneId, '\n\n paneDisplays', paneDisplays)
   return (
     <div onClick={setPaneFocus} className={`pane ${focusedPaneId === paneId ? 'focused' : ''}`}>
+      <p>Pane ID: {paneId}</p>
       {paneDisplays.map(({ id, componentName, props }) => {
         const Component = componentRegistry[componentName];
         return Component ? <Component key={id} displayId={id} {...props} /> : null;
