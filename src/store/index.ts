@@ -181,16 +181,14 @@ export const useLayoutStore = create(
     closeDisplay: (displayId: string) => {
       console.log("🚀 ~ withMiddleware ~ displayId:", displayId)
       const { displays, updateLayoutStructure } = get()
-      console.log('ALL ITEM ', displays);
-      // const allItems = Object.values(displays).filter(dis => {
-      //   return dis.id != displayId
-      // });
-      const allItems = Object.values(displays).reduce((out, cv) => {
+      
+      const allItems = Object.values(displays).reduce((out: [string, DisplayData][], cv: DisplayData) => {
         if(cv.id != displayId) {
           out.push([cv.id, cv])
         }
         return out;
-      }, []);
+      }, [] as [string, DisplayData][]);
+
       set({displays: Object.fromEntries(allItems)})
       // should check it the pane has no display content and no children, the pane should be removed from the layout
       updateLayoutStructure();
