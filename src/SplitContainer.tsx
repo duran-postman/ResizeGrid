@@ -4,7 +4,7 @@ import { useLayoutStore } from './store';
 import PaneRenderer from './PaneRenderer';
 
 export const SplitContainer = ({ node }: { node: Pane }) => {
-  const { layout, updateLayout, focusedPaneId }: any = useLayoutStore();
+  const { layout, updateLayoutSizes, focusedPaneId }: any = useLayoutStore();
   const isRow = node.direction === 'row';
   const sizes = normalizeSizes(node.sizes, node.children?.length || 0);
 
@@ -28,9 +28,10 @@ export const SplitContainer = ({ node }: { node: Pane }) => {
       newSizes[index + 1] = b;
 
       const newLayout = JSON.parse(JSON.stringify(layout)) as Pane;
-      let target = findNodeById(newLayout, node.id);
-      if (target) target.sizes = newSizes;
-      updateLayout(newLayout);
+      // let target = findNodeById(newLayout, node.id);
+      // if (target) target.sizes = newSizes;
+      // updateLayoutSizes(newLayout);
+      updateLayoutSizes(node.id, newSizes);
     }
 
     function onMouseUp() {
@@ -43,7 +44,7 @@ export const SplitContainer = ({ node }: { node: Pane }) => {
   };
 
   if (!node.children || node.children.length === 0) {
-    return <PaneRenderer paneId={node.id} focused={focusedPaneId === node.id} />;
+    return <PaneRenderer paneId={node.id} displayConteneIds={node.displayContent || []} focused={focusedPaneId === node.id} />;
   }
 
   const gridStyle: React.CSSProperties = {
@@ -56,23 +57,26 @@ export const SplitContainer = ({ node }: { node: Pane }) => {
       : '100%',
   };
 
+  // console.log('The actual split content renderer ', node)
   return (
     <div className="split-container" style={gridStyle}>
-      {node.children.map((child: Pane, index: number) => (
-        <React.Fragment key={child.id}>
-          {child.type === 'split' ? (
-            <SplitContainer node={child} />
-          ) : (
-            <PaneRenderer paneId={child.id} focused={focusedPaneId === node.id}/>
-          )}
-          {index < (node.children || []).length - 1 && (
-            <div
-              className={`resizer ${isRow ? 'vertical' : 'horizontal'}`}
-              onMouseDown={handleDragStart(index)}
-            />
-          )}
-        </React.Fragment>
-      ))}
+      {node.children.map((child: Pane, index: number) => {
+        return (
+          <React.Fragment key={child.id}>
+            {child.type === 'split' ? (
+              <SplitContainer node={child} />
+            ) : (
+              <PaneRenderer paneId={child.id} displayConteneIds={child.displayContent || []} focused={focusedPaneId === node.id}/>
+            )}
+            {index < (node.children || []).length - 1 && (
+              <div
+                className={`resizer ${isRow ? 'vertical' : 'horizontal'}`}
+                onMouseDown={handleDragStart(index)}
+              />
+            )}
+          </React.Fragment>
+        )
+      })}
     </div>
   );
 };
