@@ -1,69 +1,160 @@
-# React + TypeScript + Vite
+# ResizeGrid
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A dynamic, resizable grid layout application built with React, TypeScript, and Vite that allows users to create, organize, and resize content panes in a flexible grid system.
 
-Currently, two official plugins are available:
+## What It Does
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+ResizeGrid is a **dynamic layout management system** that provides:
 
-## Expanding the ESLint configuration
+- **Resizable Grid Layouts**: Create and resize panes both horizontally and vertically
+- **Content Management**: Display and edit text content in organized panes
+- **Dynamic Pane Creation**: Split existing panes to create new content areas
+- **Persistent Layouts**: Save and restore your custom grid arrangements
+- **Focus Management**: Track which pane is currently active
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## How It Works
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Core Architecture
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+The application uses a **tree-based layout system** where each pane can be either:
+- **Leaf Pane**: Contains content (text displays)
+- **Split Pane**: Contains other panes arranged in rows or columns
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Key Components
+
+#### 1. **SplitContainer** - The Layout Engine
+- Renders the grid structure using CSS Grid
+- Handles mouse drag events for resizing panes
+- Manages the visual representation of the layout tree
+- Creates resizer handles between panes
+
+#### 2. **ContentSelector** - Content Management
+- Provides a dropdown to select from predefined text content
+- Allows opening content in new panes (row or column direction)
+- Manages pane focus and layout structure updates
+
+#### 3. **PaneRenderer** - Content Display
+- Renders individual panes with their associated content
+- Manages pane focus states
+- Dynamically loads content components based on the component registry
+
+#### 4. **TextDisplay** - Content Component
+- Displays editable text content
+- Allows inline editing of text
+- Provides close functionality for individual content items
+
+### State Management
+
+The application uses **Zustand** for state management with these key stores:
+
+- **Layout Store**: Manages the entire layout structure, pane relationships, and content displays
+- **Persistent Storage**: Automatically saves layouts to localStorage
+- **Real-time Updates**: Updates the UI immediately when layouts change
+
+### Layout System
+
+#### Pane Structure
+```typescript
+type Pane = {
+  id: string;
+  type: 'split' | 'leaf' | 'content';
+  direction: 'row' | 'column';
+  sizes: number[];        // Relative sizes of child panes
+  children?: Pane[];      // Child panes (for split panes)
+  displayContent?: string[]; // Content IDs to display
+}
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+#### Resizing Algorithm
+1. **Mouse Down**: Captures initial position and pane sizes
+2. **Mouse Move**: Calculates new sizes based on drag distance
+3. **Size Normalization**: Ensures sizes remain proportional and within bounds
+4. **Layout Update**: Propagates changes through the layout tree
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Content System
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+The application comes with **pre-built text content** (Lorem Ipsum style) that can be:
+- Selected from a dropdown menu
+- Opened in new panes
+- Edited inline
+- Closed individually
+
+## Features
+
+### 🎯 **Dynamic Layouts**
+- Create panes by splitting existing ones
+- Resize panes by dragging the borders
+- Support for both horizontal and vertical splits
+
+### 📱 **Responsive Design**
+- CSS Grid-based layout system
+- Automatic size normalization
+- Minimum size constraints to prevent unusable panes
+
+### 💾 **Persistence**
+- Layouts automatically save to localStorage
+- Restore your custom arrangements on page reload
+- Separate storage for layout structure and content displays
+
+### 🔧 **Developer Experience**
+- TypeScript for type safety
+- Zustand for predictable state management
+- Redux DevTools integration for debugging
+
+## Technical Implementation
+
+### Dependencies
+- **React 19**: Latest React with modern features
+- **TypeScript**: Full type safety throughout the codebase
+- **Zustand**: Lightweight state management
+- **Vite**: Fast development and build tooling
+
+### Key Algorithms
+
+#### Size Normalization
+```typescript
+function normalizeSizes(sizes: number[], count: number) {
+  const filled = Array.from({ length: count }, (_, i) => sizes[i] ?? DEFAULT_SIZE);
+  const total = filled.reduce((a, b) => a + b, 0);
+  return filled.map((s) => s / total);
+}
 ```
+
+#### Layout Structure Updates
+The system maintains both a flat structure for easy updates and a hierarchical structure for rendering, automatically syncing between the two.
+
+## Usage
+
+1. **Select Content**: Choose from the dropdown of available text content
+2. **Create Panes**: Click "Open row" or "Open column" to create new panes
+3. **Resize Panes**: Drag the borders between panes to resize them
+4. **Edit Content**: Click on text to edit it inline
+5. **Close Content**: Use the close button on individual content items
+6. **Focus Management**: Click on panes to focus them for new content placement
+
+## Development
+
+### Prerequisites
+- Node.js 23+ (required for Vite 7)
+- npm or yarn
+
+### Setup
+```bash
+npm install
+npm run dev
+```
+
+### Build
+```bash
+npm run build
+npm run preview
+```
+
+## Architecture Benefits
+
+- **Modular**: Each component has a single responsibility
+- **Extensible**: Easy to add new content types via the component registry
+- **Performant**: Efficient updates using flat data structures
+- **Maintainable**: Clear separation of concerns between layout, content, and state
+
+This application demonstrates advanced React patterns for building complex, interactive layout systems with real-time updates and persistent state management.
